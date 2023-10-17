@@ -5,6 +5,10 @@ name = "pypi"
 
 [packages]
 django = "*"
+djangorestframework = "*"
+psycopg2 = "*"
+python-dotenv = "*"
+dj-database-url = "*"
 
 [dev-packages]
 
