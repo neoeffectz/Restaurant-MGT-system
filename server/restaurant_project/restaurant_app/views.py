@@ -89,7 +89,7 @@ def restaurant(request):
         'search_db':product_db['search_db'], 
         'cartItems':cartItems,
         'title':'restaurant',
-        'Common_brands':Common_categories,
+        'Common_categories':Common_categories,
         }
     return render(request, 'restaurant/restaurant.html', context)
 
