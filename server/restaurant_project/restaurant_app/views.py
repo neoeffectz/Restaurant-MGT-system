@@ -17,7 +17,7 @@ import json
 from json import dumps
 import datetime
 from django.contrib.auth.decorators import login_required
-from .utils import guestOrder
+from .utils import guestOrder, cartData, productDet
 
 
 class UserRegistrationView(generics.CreateAPIView):
@@ -44,6 +44,56 @@ class UserAuthenticationView(APIView):
         token, created = Token.objects.get_or_create(user=user)
 
         return Response({"detail": "User logged in successfully.", "token": token.key})
+
+
+def restaurant(request):
+    data = cartData(request)
+    cartItems = data['cartItems']
+        
+    products = MenuProducts.objects.all()
+    product_db = productDet(request,products)
+
+    #getting a complete order_id
+    complete_order = Order.objects.filter(complete=True)
+
+    for order in complete_order: 
+        #getting the order items with the complete order_id 
+        Orderitem_list = OrderItem.objects.filter(order_id=order)
+
+        print(Orderitem_list, "Orderitem_list LINE 92")
+        # print(Products.objects.filter(name=Orderitem_list[0])[0].id)
+        print(order, "Orderitem_list LINE 65")
+
+
+    Common_categories = Categories.objects.all()
+    prod_category = products.filter().values('id','name','category_id')
+
+    restaurant_categories_id = products.filter().values('category_id')
+    restaurant_categories = []
+    for s_cat in restaurant_categories_id:
+        restaurant_categories_name = Categories.objects.get(id=s_cat['category_id'])
+        restaurant_categories.append(restaurant_categories_name.name)
+
+
+    clean_prod_category = []
+    for i in prod_category:
+        category_name = Categories.objects.filter(id=i['category_id']).values('name')[0]['name']
+        i['category_id'] = category_name
+        clean_prod_category.append(i)
+    
+    context = {
+        'products':products,
+        'restaurant_categories':list(set(restaurant_categories)),
+        'clean_prod_category':dumps(clean_prod_category),
+        "each_product_db":product_db['each_product_db'],
+        'search_db':product_db['search_db'], 
+        'cartItems':cartItems,
+        'title':'restaurant',
+        'Common_brands':Common_categories,
+        }
+    return render(request, 'restaurant/restaurant.html', context)
+
+
 
 
 

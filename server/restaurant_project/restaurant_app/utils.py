@@ -22,7 +22,7 @@ def cookieCart(request):
 		try:
 			cartItems += cart[i]['quantity']
 
-			product = Products.objects.get(id=i)
+			product = MenuProducts.objects.get(id=i)
 			total = (product.price * cart[i]['quantity'])
 
 			order['get_cart_total'] += total
