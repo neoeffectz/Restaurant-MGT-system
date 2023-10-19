@@ -6,7 +6,10 @@ from . import views
 urlpatterns = [
     path('register/', UserRegistrationView.as_view(), name='user-registration'),
     path('login/', UserAuthenticationView.as_view(), name='user-login'),
-    
+
+    path('restaurant/', views.restaurant, name='restaurant'),
+    path('updateItem/', views.updateItem, name='updateItem'),
+    path('processOrder/', views.processOrder, name='processOrder'),
     
     # Other URL patterns...
 ]

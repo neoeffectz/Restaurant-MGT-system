@@ -1,5 +1,9 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
+<<<<<<< Updated upstream
+=======
+from .models import *
+>>>>>>> Stashed changes
 from django.contrib.auth import authenticate
 
 
@@ -34,5 +38,45 @@ class UserAuthenticationSerializer(serializers.Serializer):
         if not user:
             raise serializers.ValidationError("Invalid username or password.")
         return user
-    
-    
+
+# model serializers starts here...
+
+class CustomerSerializer(serializers.ModelSerializer):
+
+    class Meta: 
+        model = Customer 
+        fields = "__all__"
+
+
+class CategoriesSerializer(serializers.ModelSerializer):
+
+    class Meta: 
+        model = Categories 
+        fields = "__all__"
+
+
+class MenuProductsSerializer(serializers.ModelSerializer):
+
+    class Meta: 
+        model = MenuProducts 
+        fields = "__all__"
+
+
+class OrderSerializer(serializers.ModelSerializer):
+
+    class Meta: 
+        model = Order 
+        fields = "__all__"
+
+
+class OrderItemSerializer(serializers.ModelSerializer):
+
+    class Meta: 
+        model = OrderItem 
+        fields = "__all__"
+
+
+class UpdateItemSerializer(serializers.Serializer):
+   
+   productId = serializers.CharField()
+   action = serializers.CharField()

@@ -1,10 +1,11 @@
+from datetime import datetime
 from django.shortcuts import render
-from rest_framework.response import Response
 from .serializers import UserRegistrationSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.decorators import api_view
 from django.contrib.auth import login
-from .serializers import UserAuthenticationSerializer
+from .serializers import *
 from rest_framework.authtoken.models import Token
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
@@ -14,10 +15,15 @@ from rest_framework import generics
 from .models import *
 from django.http import HttpResponseRedirect, JsonResponse
 import json
+<<<<<<< Updated upstream
 from json import dumps
 import datetime
 from django.contrib.auth.decorators import login_required
 from .utils import guestOrder, cartData, productDet
+=======
+from .utils import guestOrder
+from django.http import JsonResponse
+>>>>>>> Stashed changes
 
 
 class UserRegistrationView(generics.CreateAPIView):
@@ -45,13 +51,12 @@ class UserAuthenticationView(APIView):
 
         return Response({"detail": "User logged in successfully.", "token": token.key})
 
-
+@api_view(['GET'])
 def restaurant(request):
-    data = cartData(request)
-    cartItems = data['cartItems']
+    # data = cartData(request)
+    # cartItems = data['cartItems']
         
     products = MenuProducts.objects.all()
-    product_db = productDet(request,products)
 
     #getting a complete order_id
     complete_order = Order.objects.filter(complete=True)
@@ -82,48 +87,53 @@ def restaurant(request):
         clean_prod_category.append(i)
     
     context = {
-        'products':products,
-        'restaurant_categories':list(set(restaurant_categories)),
-        'clean_prod_category':dumps(clean_prod_category),
-        "each_product_db":product_db['each_product_db'],
-        'search_db':product_db['search_db'], 
-        'cartItems':cartItems,
-        'title':'restaurant',
-        'Common_categories':Common_categories,
+        # 'cartItems':cartItems, do not delete
         }
-    return render(request, 'restaurant/restaurant.html', context)
+    serializer = MenuProductsSerializer(products, many=True)
+    # print(serializer.data[0]['name'])
+    return Response(
+        {
+            "MenuProducts": serializer.data,  
+            'restaurant_categories':list(set(restaurant_categories)), 
+            'clean_prod_category':list(clean_prod_category),
+            'title':'restaurant',
+        }
+    )
 
 
-
-
-
+@api_view(["POST"])
 def updateItem(request):
-    data = json.loads(request.body)
-    productId = data['productId']
-    action = data['action']
+    serializer = UpdateItemSerializer(data=request.data)
+    serializer.is_valid(raise_exception=True)
+    
+    productId = int(serializer.data['productId'])
+    action = serializer.data['action']
     print('action:', action)
-    print('product:', productId)
+    print('productid:', productId)
     
     
-    customer = request.user.customer
-    product = MenuProducts.objects.get(id=productId)
+    #You need to associate a user with tokens and be able to know who did a certain action below
 
-    list_of_orders = []
+
+    # customer = request.user.customer
+    # product = MenuProducts.objects.get(id=productId)
+
+    # list_of_orders = []
     
-    order, created = Order.objects.get_or_create(customer=customer, complete=False)
-    orderItem, created = OrderItem.objects.get_or_create(order=order, product=product, productId=productId)
+    # order, created = Order.objects.get_or_create(customer=customer, complete=False)
+    # orderItem, created = OrderItem.objects.get_or_create(order=order, product=product, productId=productId)
     
-    if action == 'add':
-        orderItem.quantity = (orderItem.quantity + 1)
-    elif action == 'remove':
-        orderItem.quantity = (orderItem.quantity - 1)
+    # if action == 'add':
+    #     orderItem.quantity = (orderItem.quantity + 1)
+    # elif action == 'remove':
+    #     orderItem.quantity = (orderItem.quantity - 1)
     
-    orderItem.save()
-    if orderItem.quantity <= 0:
-        orderItem.delete()
+    # orderItem.save()
+    # if orderItem.quantity <= 0:
+    #     orderItem.delete()
     
     
-    return JsonResponse('item added', safe=False)
+    return Response(serializer.data)
 
 def processOrder(request):
     transaction_id = datetime.datetime.now().timestamp()
