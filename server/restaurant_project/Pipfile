@@ -9,6 +9,7 @@ djangorestframework = "*"
 psycopg2 = "*"
 python-dotenv = "*"
 dj-database-url = "*"
+pillow = "*"
 
 [dev-packages]
 

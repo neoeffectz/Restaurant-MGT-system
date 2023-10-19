@@ -9,14 +9,9 @@ from rest_framework.authtoken.models import Token
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import generics
-
-
 from .models import *
-from django.http import HttpResponseRedirect, JsonResponse
 import json
 from json import dumps
-import datetime
-from django.contrib.auth.decorators import login_required
 from .utils import guestOrder, cartData, productDet
 
 
@@ -27,7 +22,10 @@ class UserRegistrationView(generics.CreateAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
-        return Response({"detail": "User registered successfully."}, status=201)
+        # added token creation in the endpoint so token can be generated on sign up
+        token, created = Token.objects.get_or_create(user=user)
+
+        return Response({"detail": "User registered successfully.", "token": token.key}, status=201)
 
 
 class UserAuthenticationView(APIView):
@@ -40,10 +38,10 @@ class UserAuthenticationView(APIView):
         user = serializer.validated_data
         login(request, user)
 
-        
         token, created = Token.objects.get_or_create(user=user)
 
-        return Response({"detail": "User logged in successfully.", "token": token.key})
+        
+        return Response({"detail": "User logged in successfully.",  "token": token.key})
 
 
 def restaurant(request):

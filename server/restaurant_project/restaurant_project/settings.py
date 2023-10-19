@@ -14,7 +14,6 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
-import dj_database_url
 
 load_dotenv()
 
@@ -37,6 +36,7 @@ ALLOWED_HOSTS = []
 
 
 # Application definition
+# added token to the installed apps
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'rest_framework.authtoken',
     'restaurant_app',
 
 ]
@@ -90,11 +91,21 @@ WSGI_APPLICATION = 'restaurant_project.wsgi.application'
 #     )
 # }
 
+
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     }
+}
+
+# added token as an authentication class
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ],
 }
 
 

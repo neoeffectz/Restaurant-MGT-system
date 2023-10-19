@@ -1,4 +1,3 @@
-
 from django.db import models
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
@@ -19,7 +18,7 @@ class Customer(models.Model):
 @receiver(post_save, sender=User)
 def create_customer(sender, instance, created, *args, **kwargs):
     if created:
-        Customer.objects.create(user=instance, email=instance.email, name=instance.user_name)
+        Customer.objects.create(user=instance, email=instance.email, name=instance.username)
         print(instance, 'customer created')
 
 

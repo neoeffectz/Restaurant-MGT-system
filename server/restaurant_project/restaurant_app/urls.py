@@ -8,5 +8,5 @@ urlpatterns = [
     path('login/', UserAuthenticationView.as_view(), name='user-login'),
     
     
-    # Other URL patterns...
+    
 ]
