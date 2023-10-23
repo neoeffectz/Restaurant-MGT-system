@@ -1,9 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-<<<<<<< Updated upstream
-=======
 from .models import *
->>>>>>> Stashed changes
 from django.contrib.auth import authenticate
 
 

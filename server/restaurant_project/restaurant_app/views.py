@@ -15,15 +15,8 @@ from rest_framework import generics
 from .models import *
 from django.http import HttpResponseRedirect, JsonResponse
 import json
-<<<<<<< Updated upstream
-from json import dumps
-import datetime
-from django.contrib.auth.decorators import login_required
-from .utils import guestOrder, cartData, productDet
-=======
 from .utils import guestOrder
 from django.http import JsonResponse
->>>>>>> Stashed changes
 
 
 class UserRegistrationView(generics.CreateAPIView):
@@ -57,7 +50,7 @@ def restaurant(request):
     # cartItems = data['cartItems']
         
     products = MenuProducts.objects.all()
-
+    Common_categories = Categories.objects.all()
     #getting a complete order_id
     complete_order = Order.objects.filter(complete=True)
 
@@ -70,14 +63,10 @@ def restaurant(request):
         print(order, "Orderitem_list LINE 65")
 
 
-    Common_categories = Categories.objects.all()
+    
     prod_category = products.filter().values('id','name','category_id')
 
-    restaurant_categories_id = products.filter().values('category_id')
-    restaurant_categories = []
-    for s_cat in restaurant_categories_id:
-        restaurant_categories_name = Categories.objects.get(id=s_cat['category_id'])
-        restaurant_categories.append(restaurant_categories_name.name)
+    
 
 
     clean_prod_category = []
@@ -90,11 +79,12 @@ def restaurant(request):
         # 'cartItems':cartItems, do not delete
         }
     serializer = MenuProductsSerializer(products, many=True)
+    serializerCategories = CategoriesSerializer(Common_categories, many=True)
     # print(serializer.data[0]['name'])
     return Response(
         {
             "MenuProducts": serializer.data,  
-            'restaurant_categories':list(set(restaurant_categories)), 
+            'restaurant_categories':serializerCategories, 
             'clean_prod_category':list(clean_prod_category),
             'title':'restaurant',
         }
