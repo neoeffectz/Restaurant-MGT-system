@@ -10,6 +10,7 @@ urlpatterns = [
     path('restaurant/', views.restaurant, name='restaurant'),
     path('updateItem/', views.updateItem, name='updateItem'),
     path('processOrder/', views.processOrder, name='processOrder'),
-    
+
+
     
 ]
