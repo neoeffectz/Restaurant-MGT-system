@@ -45,54 +45,6 @@ def cookieCart(request):
 			pass
 	return {'cartItems':cartItems, 'order':order, 'items':items}
 
-def cartData(request):
-	if request.user.is_authenticated:
-		customer = request.user.customer
-		order, created = Order.objects.get_or_create(customer=customer, complete=False)
-		items = order.orderitem_set.all()
-		cartItems = order.get_cart_items
-	else:
-		cookieData = cookieCart(request)
-		cartItems = cookieData['cartItems']
-		order = cookieData['order']
-		items = cookieData['items']
-
-	return {'cartItems':cartItems, 'order':order, 'items':items}
-
-
-def productDet(request, products):
-	all_prod = products.values()
-	# print(all_prod[0])
-	
-	#get id and prod name
-	main_array = []
-	for i in range(0, len(all_prod)):
-		# product package rep the product name and its id in their own array
-		each_product_package = []
-
-		# adding id to package
-		prod_id = all_prod[i]["id"]
-		each_product_package.append(prod_id)
-
-		# adding name to package..
-		prod_name = all_prod[i]["name"]
-		each_product_package.append(prod_name)
-
-
-		main_array.append(each_product_package)
-	
-	search_db = dumps(main_array)
-	
-	
-	each_product_det = []
-	
-	for i in range(0, len(products)):
-		each_product_det.append(products.values()[i])
-	
-	
-	each_product_db = dumps(each_product_det)
-
-	return {'each_product_db':each_product_db, 'search_db':search_db}
 
 def guestOrder(request,data):
 	name = data['shipping']['fname']
