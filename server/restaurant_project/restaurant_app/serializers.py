@@ -13,7 +13,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         fields = ('username', 'password', 'email', 'first_name', 'last_name')
 
     def create(self, validated_data):
-        user = User.objects.create_user(
+        user = User.objects.create_user(    
             username=validated_data['username'],
             password=validated_data['password'],
             email=validated_data.get('email', ''),
@@ -23,18 +23,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         return user
 
 
-class UserAuthenticationSerializer(serializers.Serializer):
-    username = serializers.CharField()
-    password = serializers.CharField()
 
-    def validate(self, attrs):
-        user = authenticate(
-            username=attrs['username'],
-            password=attrs['password']
-        )
-        if not user:
-            raise serializers.ValidationError("Invalid username or password.")
-        return user
 
 # model serializers starts here...
 

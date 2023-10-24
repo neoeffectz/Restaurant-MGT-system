@@ -1,19 +1,14 @@
 from datetime import datetime
-from django.shortcuts import render
 from .serializers import UserRegistrationSerializer
-from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from django.contrib.auth import login
 from .serializers import *
-from rest_framework.authtoken.models import Token
-from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import generics
 from .models import *
 import json
 from json import dumps
-from .utils import guestOrder, cartData, productDet
 from .utils import guestOrder
 from django.http import JsonResponse
 
@@ -26,27 +21,20 @@ class UserRegistrationView(generics.CreateAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
-        # added token creation in the endpoint so token can be generated on sign up
-        token, created = Token.objects.get_or_create(user=user)
-
-        return Response({"detail": "User registered successfully.", "token": token.key}, status=201)
+        
+        return Response(serializer.data)
 
 
-class UserAuthenticationView(APIView):
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated]
+class CreateStaffView(generics.CreateAPIView):
+    serializer_class = UserRegistrationSerializer
 
     def post(self, request, *args, **kwargs):
-        serializer = UserAuthenticationSerializer(data=request.data)
+        serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        user = serializer.validated_data
-        login(request, user)
-
-        token, created = Token.objects.get_or_create(user=user)
-
-
+        user = serializer.save()
         
-        return Response({"detail": "User logged in successfully.",  "token": token.key})
+        return Response(serializer.data)
+
 
 
 
