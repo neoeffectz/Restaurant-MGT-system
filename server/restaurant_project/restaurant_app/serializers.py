@@ -1,11 +1,30 @@
 from rest_framework import serializers
-from django.contrib.auth.models import User
 from .models import *
 from django.contrib.auth import authenticate
 
 
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True)
+
+    class Meta:
+        model = CustomUser
+        fields = ('username', 'password', 'email', 'first_name', 'last_name')
+
+    def create(self, validated_data):
+        user = CustomUser.objects.create_user(    
+            username=validated_data['username'],
+            password=validated_data['password'],
+            email=validated_data.get('email', ''),
+            first_name=validated_data.get('first_name', ''),
+            last_name=validated_data.get('last_name', '')
+        )
+        return user
+    
+# added a serializer for staff registration
+    
+class StaffRegistrationSerializer(serializers.ModelSerializer):
+
     password = serializers.CharField(write_only=True)
 
     class Meta:
@@ -25,13 +44,10 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
 
 
 
+
 # model serializers starts here...
 
-class CustomerSerializer(serializers.ModelSerializer):
 
-    class Meta: 
-        model = Customer 
-        fields = "__all__"
 
 
 class CategoriesSerializer(serializers.ModelSerializer):

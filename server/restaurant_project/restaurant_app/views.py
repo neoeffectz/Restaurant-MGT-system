@@ -1,5 +1,5 @@
 from datetime import datetime
-from .serializers import UserRegistrationSerializer
+from .serializers import UserRegistrationSerializer, StaffRegistrationSerializer
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from django.contrib.auth import login
@@ -25,13 +25,14 @@ class UserRegistrationView(generics.CreateAPIView):
         return Response(serializer.data)
 
 
-class CreateStaffView(generics.CreateAPIView):
-    serializer_class = UserRegistrationSerializer
+class StaffRegistrationView(generics.CreateAPIView):
+    serializer_class = StaffRegistrationSerializer
 
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
+        user.is_staff = True
         
         return Response(serializer.data)
 
