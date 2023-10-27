@@ -1,16 +1,18 @@
 from datetime import datetime
-from .serializers import UserRegistrationSerializer, StaffRegistrationSerializer
+from .serializers import UserRegistrationSerializer
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from django.contrib.auth import login
 from .serializers import *
-from rest_framework.permissions import IsAuthenticated
 from rest_framework import generics
 from .models import *
 import json
 from json import dumps
 from .utils import guestOrder
 from django.http import JsonResponse
+from rest_framework import permissions 
+from .permissions import IsManager
+from rest_framework.permissions import IsAuthenticated
 
 
 
@@ -25,16 +27,22 @@ class UserRegistrationView(generics.CreateAPIView):
         return Response(serializer.data)
 
 
-class StaffRegistrationView(generics.CreateAPIView):
-    serializer_class = StaffRegistrationSerializer
+class CreateProductView(generics.ListCreateAPIView):
+    queryset = MenuProducts.objects.all()
+    serializer_class = MenuProductsSerializer
+    
 
-    def post(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        user = serializer.save()
-        user.is_staff = True
+    def get_permissions(self):
+        if self.request.method == 'POST':
+            
+            self.permission_classes = [IsManager]
         
-        return Response(serializer.data)
+        return super(CreateProductView, self).get_permissions()
+    
+
+    
+
+
 
 
 

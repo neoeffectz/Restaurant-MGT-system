@@ -1,8 +1,4 @@
 from django.db import models
-from django.db.models.signals import post_save, pre_save
-from django.dispatch import receiver
-from django.conf import settings
-from django.contrib.auth.models import User
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.base_user import BaseUserManager
 from django.utils.translation import gettext_lazy as _ 
@@ -13,12 +9,12 @@ from restaurant_project.settings import AUTH_USER_MODEL
 
 class CustomUserManager(BaseUserManager):
     
-    def create_user(self, email, password, first_name, last_name, phone_number, role, **extra_fields):
+    def create_user(self, email, password, first_name, last_name, phone_number, **extra_fields):
 
         if not email:
             raise ValueError(_("The Email must be set"))
         email = self.normalize_email(email)
-        user = self.model(email=email, first_name=first_name, last_name =last_name, phone_number=phone_number, role=role, **extra_fields)
+        user = self.model(email=email, first_name=first_name, last_name =last_name, phone_number=phone_number, **extra_fields)
         user.set_password(password)
         user.save()
         return user
@@ -39,13 +35,7 @@ class CustomUserManager(BaseUserManager):
 
 
 class CustomUser(AbstractUser):
-    class Roles(models.TextChoices):
-        """define the user roles"""
-
-        
-        MANAGER = "MANAGER", "Manager"
-        STAFF = "STAFF", "Staff"
-        CLIENT = "CLIENT", "Client"
+    
     
     username = None
     email = models.EmailField(_("email address"), unique=True)
@@ -54,7 +44,6 @@ class CustomUser(AbstractUser):
     phone_number = models.CharField(
         "Phone Number", max_length=20, null=False, unique=True
     )
-    role = models.CharField(max_length=50, default=Roles.CLIENT)
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
@@ -96,7 +85,6 @@ class Categories(models.Model):
 
 
 class MenuProducts(models.Model):
-    vendor = models.ForeignKey(to=AUTH_USER_MODEL, null=True, blank=True, on_delete=models.CASCADE)
     name = models.CharField(max_length=200)
     category = models.ForeignKey(Categories, null=True, on_delete=models.CASCADE)
     price = models.FloatField()#models.DecimalField(max_digits=6, decimal_places=2)
