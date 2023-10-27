@@ -102,7 +102,7 @@ DATABASES = {
     }
 }
 
-# added token as an authentication class
+# added simplejwt as an authentication class for drf
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
@@ -110,6 +110,7 @@ REST_FRAMEWORK = {
     ],
 }
 
+# added an expiration for token 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=30),

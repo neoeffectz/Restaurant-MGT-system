@@ -6,7 +6,7 @@ from restaurant_project.settings import AUTH_USER_MODEL
 
 
 
-
+#used the base user to replace the username with email as the authentication
 class CustomUserManager(BaseUserManager):
     
     def create_user(self, email, password, first_name, last_name, phone_number, **extra_fields):
@@ -33,6 +33,7 @@ class CustomUserManager(BaseUserManager):
         
 
 
+# Created a custom user which can be used as foreign key for any other models, deleted the customer model
 
 class CustomUser(AbstractUser):
     

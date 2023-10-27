@@ -13,7 +13,9 @@ urlpatterns = [
     path('auth/login/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('auth/register/', UserRegistrationView.as_view(), name='user-registration'),
 
+    #urls for crud action on product
     path('product/', CreateProductView.as_view(), name='create-product'),
+    path('product/<int:pk>/', ProductDetailView.as_view(), name='product-detail'),
 
 
 
