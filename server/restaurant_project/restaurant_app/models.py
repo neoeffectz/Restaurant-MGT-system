@@ -56,7 +56,7 @@ class CustomUser(AbstractUser):
 
 
 class Amenity(models.Model):
-    name = models.CharField(max_length=50)
+    name = models.CharField(max_length=50, blank=True, null=True)
     description = models.TextField(blank=True, null=True)
 
     def __str__(self):
@@ -74,7 +74,7 @@ class Hotel(models.Model):
     email = models.EmailField()
     has_room_service = models.BooleanField(default=False)
     has_tables = models.BooleanField(default=False)
-    amenities = models.ManyToManyField('Amenity', related_name='hotels')
+    # amenities = models.ManyToManyField(Amenity, related_name='hotels')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -85,8 +85,6 @@ class Hotel(models.Model):
 
     class Meta:
         verbose_name_plural = 'Hotel'
-
-
 
 class Reservation(models.Model):
     guest = models.ForeignKey(AUTH_USER_MODEL, on_delete=models.CASCADE)
@@ -112,6 +110,7 @@ class Reservation(models.Model):
     
     class Meta:
         verbose_name_plural = 'Reservation'
+
 
 
 class Categories(models.Model):
@@ -169,7 +168,7 @@ class MenuProducts(models.Model):
         except:
             url = ''
         return url
-    
+
 
 class Order(models.Model):
     customer = models.ForeignKey(to=AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)
@@ -200,3 +199,4 @@ class OrderItem(models.Model):
     def __str__(self):
         return str(self.order)
         
+
