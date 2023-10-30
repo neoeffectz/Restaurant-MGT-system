@@ -35,6 +35,6 @@ admin.site.register(Categories)
 admin.site.register(MenuProducts)
 admin.site.register(Order)
 admin.site.register(OrderItem)
-
-
-
+admin.site.register(Amenity)
+admin.site.register(Hotel)
+admin.site.register(Reservation)

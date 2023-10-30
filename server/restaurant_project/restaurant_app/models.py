@@ -3,13 +3,13 @@ from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.base_user import BaseUserManager
 from django.utils.translation import gettext_lazy as _ 
 from restaurant_project.settings import AUTH_USER_MODEL
-
+import uuid
 
 
 #used the base user to replace the username with email as the authentication
 class CustomUserManager(BaseUserManager):
     
-    def create_user(self, email, password, first_name, last_name, phone_number, **extra_fields):
+    def create_user(self, email, password, first_name='first_name', last_name='last_name', phone_number="phone_number", **extra_fields):
 
         if not email:
             raise ValueError(_("The Email must be set"))
@@ -40,10 +40,10 @@ class CustomUser(AbstractUser):
     
     username = None
     email = models.EmailField(_("email address"), unique=True)
-    first_name = models.CharField("First Name", max_length=30, null=False)
+    first_name = models.CharField("First Name", max_length=30, null=False, blank=True)
     last_name = models.CharField("Last Name", max_length=30, null=True, blank=True)
     phone_number = models.CharField(
-        "Phone Number", max_length=20, null=False, unique=True
+        "Phone Number", max_length=20, blank=True, null=False, unique=True, default=uuid.uuid1
     )
 
     USERNAME_FIELD = "email"
@@ -53,6 +53,18 @@ class CustomUser(AbstractUser):
 
     def __str__(self):
         return self.email
+
+
+class Amenity(models.Model):
+    name = models.CharField(max_length=50)
+    description = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return self.name
+    
+
+    class Meta:
+        verbose_name_plural = 'Amenity'
 
 
 class Hotel(models.Model):
@@ -74,19 +86,10 @@ class Hotel(models.Model):
     class Meta:
         verbose_name_plural = 'Hotel'
 
-class Amenity(models.Model):
-    name = models.CharField(max_length=50)
-    description = models.TextField(blank=True, null=True)
 
-    def __str__(self):
-        return self.name
-    
-
-    class Meta:
-        verbose_name_plural = 'Amenity'
 
 class Reservation(models.Model):
-    guest = models.ForeignKey(User, on_delete=models.CASCADE)
+    guest = models.ForeignKey(AUTH_USER_MODEL, on_delete=models.CASCADE)
     hotel = models.ForeignKey(Hotel, on_delete=models.CASCADE)
     check_in = models.DateField()
     check_out = models.DateField()

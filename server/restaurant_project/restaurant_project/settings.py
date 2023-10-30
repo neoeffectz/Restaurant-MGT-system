@@ -52,7 +52,6 @@ INSTALLED_APPS = [
 
     #rest configuration.......
     'rest_framework',
-    'restaurant_app',
     'rest_framework_simplejwt'
 
 ]
