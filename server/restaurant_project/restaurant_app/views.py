@@ -1,21 +1,21 @@
 from datetime import datetime
 from .serializers import UserRegistrationSerializer
-from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from django.contrib.auth import login
 from .serializers import *
-from rest_framework.authtoken.models import Token
-from rest_framework.authentication import TokenAuthentication
-from rest_framework.permissions import IsAuthenticated
 from rest_framework import generics
 from .models import *
 import json
+from json import dumps
 from .utils import guestOrder
 from django.http import JsonResponse
+from rest_framework import permissions 
+from .permissions import IsManager, IsAttendant
+from rest_framework.permissions import IsAuthenticated
 
 
-
+# userregistration endpoint
 class UserRegistrationView(generics.CreateAPIView):
     serializer_class = UserRegistrationSerializer
 
@@ -23,27 +23,51 @@ class UserRegistrationView(generics.CreateAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
-        # added token creation in the endpoint so token can be generated on sign up
-        token, created = Token.objects.get_or_create(user=user)
-
-        return Response({"detail": "User registered successfully.", "token": token.key}, status=201)
+        
+        return Response(serializer.data)
 
 
-class UserAuthenticationView(APIView):
-    authentication_classes = [TokenAuthentication]
+# createproducts with permsions for manager groups
+class CreateProductView(generics.ListCreateAPIView):
+    queryset = MenuProducts.objects.all()
+    serializer_class = MenuProductsSerializer
     permission_classes = [IsAuthenticated]
 
-    def post(self, request, *args, **kwargs):
-        serializer = UserAuthenticationSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        user = serializer.validated_data
-        login(request, user)
-
-        token, created = Token.objects.get_or_create(user=user)
-
-
+    #if user is in the manager group then it can access the post endpoint but all authenticated users can acess the get all product endpoint
+    def get_permissions(self):
+        if self.request.method == 'POST':
+            
+            self.permission_classes = [IsManager]
         
-        return Response({"detail": "User logged in successfully.",  "token": token.key})
+        return super(CreateProductView, self).get_permissions()
+    
+# delete, update, and get a single product with permsions for manager groups
+class ProductDetailView(generics.RetrieveUpdateDestroyAPIView):
+    
+    queryset = MenuProducts.objects.all()
+    serializer_class = MenuProductsSerializer
+
+    permission_classes = [IsAuthenticated]
+
+    #if user is in the manager group then it can access the patch and delete endpoint but all authenticated users can acess the get a single product endpoint
+    def get_permissions(self):
+        if self.request.method == 'PATCH':
+            
+            self.permission_classes = [IsManager]
+        
+        elif self.request.method == 'DELETE':
+            self.permission_classes = [IsManager]
+        
+        return super(ProductDetailView, self).get_permissions()
+    
+
+
+    
+
+    
+
+
+
 
 
 
