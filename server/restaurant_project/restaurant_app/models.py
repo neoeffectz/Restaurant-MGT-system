@@ -19,12 +19,68 @@ class Customer(models.Model):
 def create_customer(sender, instance, created, *args, **kwargs):
     if created:
         Customer.objects.create(user=instance, email=instance.email, name=instance.username)
-        print(instance, 'customer created')
+        print(instance, 'customer has been created')
 
 
 @receiver(post_save, sender=User)
 def save_customer(sender, instance, *args, **kwargs):
     instance.customer.save()
+
+
+class Hotel(models.Model):
+    name = models.CharField(max_length=100)
+    address = models.TextField()
+    phone_number = models.CharField(max_length=20)
+    email = models.EmailField()
+    has_room_service = models.BooleanField(default=False)
+    has_tables = models.BooleanField(default=False)
+    amenities = models.ManyToManyField('Amenity', related_name='hotels')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+
+    def __str__(self):
+        return self.name
+    
+
+    class Meta:
+        verbose_name_plural = 'Hotel'
+
+class Amenity(models.Model):
+    name = models.CharField(max_length=50)
+    description = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return self.name
+    
+
+    class Meta:
+        verbose_name_plural = 'Amenity'
+
+class Reservation(models.Model):
+    guest = models.ForeignKey(User, on_delete=models.CASCADE)
+    hotel = models.ForeignKey(Hotel, on_delete=models.CASCADE)
+    check_in = models.DateField()
+    check_out = models.DateField()
+    number_of_adults = models.PositiveSmallIntegerField()
+    number_of_children = models.PositiveSmallIntegerField()
+    special_requests = models.TextField(blank=True, null=True)
+    is_confirmed = models.BooleanField(default=False)
+    table_number = models.CharField(max_length=10, null=True, blank=True)
+    table_type = models.CharField(max_length=50, null=True, blank=True)
+    room_number = models.CharField(max_length=10, null=True, blank=True)
+    room_type = models.CharField(max_length=50, null=True, blank=True)
+    price_per_night = models.DecimalField(max_digits=10, decimal_places=2)
+    total_price = models.DecimalField(max_digits=10, decimal_places=2)
+    is_available = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.guest
+    
+    class Meta:
+        verbose_name_plural = 'Reservation'
 
 
 class Categories(models.Model):
@@ -47,6 +103,9 @@ class Categories(models.Model):
         except:
             url = ''
         return url
+    
+    class Meta:
+        verbose_name_plural = 'Categories'
 
 
 class MenuProducts(models.Model):

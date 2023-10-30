@@ -1,5 +1,4 @@
 from datetime import datetime
-from django.shortcuts import render
 from .serializers import UserRegistrationSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -12,8 +11,6 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework import generics
 from .models import *
 import json
-from json import dumps
-from .utils import guestOrder, cartData, productDet
 from .utils import guestOrder
 from django.http import JsonResponse
 
@@ -52,8 +49,6 @@ class UserAuthenticationView(APIView):
 
 @api_view(['GET'])
 def restaurant(request):
-    # data = cartData(request)
-    # cartItems = data['cartItems']
         
     products = MenuProducts.objects.all()
 
@@ -66,9 +61,7 @@ def restaurant(request):
         #getting the order items with the complete order_id 
         Orderitem_list = OrderItem.objects.filter(order_id=order)
 
-        print(Orderitem_list, "Orderitem_list LINE 92")
-        # print(Products.objects.filter(name=Orderitem_list[0])[0].id)
-        print(order, "Orderitem_list LINE 65")
+        print(Orderitem_list, "Orderitem_list LINE sth")
 
 
     
@@ -83,20 +76,14 @@ def restaurant(request):
         i['category_id'] = category_name
         clean_prod_category.append(i)
     
-    context = {
-        # 'cartItems':cartItems, do not delete
-        }
+    
     serializer = MenuProductsSerializer(products, many=True)
     serializerCategories = CategoriesSerializer(Common_categories, many=True)
 
     return Response(
         {
             "MenuProducts": serializer.data,  
-
-            
-
             'restaurant_categories':serializerCategories, 
-
             'clean_prod_category':list(clean_prod_category),
             'title':'restaurant',
         }

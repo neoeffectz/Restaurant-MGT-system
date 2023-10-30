@@ -45,9 +45,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    #custom apps.......
+    'restaurant_app',
+
+    #rest configuration.......
     'rest_framework',
     'rest_framework.authtoken',
-    'restaurant_app',
 
 ]
 

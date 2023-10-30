@@ -73,6 +73,14 @@ class OrderItemSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+# class HotelSerializer(serializers.ModelSerializer):
+
+#     class Meta: 
+#         model = OrderItem 
+#         fields = "__all__"
+
+
+# custom serializers 
 class UpdateItemSerializer(serializers.Serializer):
    
    productId = serializers.CharField()
