@@ -8,7 +8,6 @@ from rest_framework import generics
 from .models import *
 import json
 from json import dumps
-from .utils import guestOrder
 from django.http import JsonResponse
 from rest_framework import permissions 
 from .permissions import IsManager, IsAttendant
@@ -125,25 +124,24 @@ def updateItem(request):
     print('productid:', productId)
     
     
-    #You need to associate a user with tokens and be able to know who did a certain action below
 
 
-    # customer = request.user.customer
-    # product = MenuProducts.objects.get(id=productId)
+    customer = request.user
+    product = MenuProducts.objects.get(id=productId)
 
-    # list_of_orders = []
+    list_of_orders = []
     
-    # order, created = Order.objects.get_or_create(customer=customer, complete=False)
-    # orderItem, created = OrderItem.objects.get_or_create(order=order, product=product, productId=productId)
+    order, created = Order.objects.get_or_create(customer=customer, complete=False)
+    orderItem, created = OrderItem.objects.get_or_create(order=order, product=product, productId=productId)
     
-    # if action == 'add':
-    #     orderItem.quantity = (orderItem.quantity + 1)
-    # elif action == 'remove':
-    #     orderItem.quantity = (orderItem.quantity - 1)
+    if action == 'add':
+        orderItem.quantity = (orderItem.quantity + 1)
+    elif action == 'remove':
+        orderItem.quantity = (orderItem.quantity - 1)
     
-    # orderItem.save()
-    # if orderItem.quantity <= 0:
-    #     orderItem.delete()
+    orderItem.save()
+    if orderItem.quantity <= 0:
+        orderItem.delete()
     
     
     return Response(serializer.data)
@@ -163,8 +161,7 @@ def processOrder(request):
         
         
 
-    else:
-        customer, order = guestOrder(request,data)
+    
         
 
     total = float(data['shipping']['total'])
@@ -176,12 +173,6 @@ def processOrder(request):
         order.cancelled = False
     order.save()
 
-    # ShippingModel.objects.create(
-    #     customer=customer,
-    #     order=order,
-    #     #more fields according to model
-    
-    # )
 
 
     return JsonResponse('payment complete', safe=False)
