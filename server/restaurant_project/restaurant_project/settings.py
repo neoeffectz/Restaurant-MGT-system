@@ -39,21 +39,45 @@ ALLOWED_HOSTS = []
 
 # Application definition
 # added token to the installed apps
-
-INSTALLED_APPS = [
+# tenant settings( converted the installed apps name to shared )
+SHARED_APPS = (
+    'django_tenants',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+<<<<<<< Updated upstream
+=======
+    #custom apps.......
+    'Amenity',
+    'Menu',
+    'users',
+
+    #rest configuration.......
+>>>>>>> Stashed changes
     'rest_framework',
     'restaurant_app',
     'rest_framework_simplejwt'
+)
 
-]
+TENANT_APPS = (
+    #custom apps.......
+    'hotel',
+    'restaurant_app',
+)
+
+INSTALLED_APPS = list(SHARED_APPS) + [app for app in TENANT_APPS if app not in SHARED_APPS]
+
+TENANT_MODEL = "hotel.Hotel" 
+
+TENANT_DOMAIN_MODEL = "hotel.Domain" 
 
 MIDDLEWARE = [
+    # multiple tenants middleware.....................
+    'tenant_schemas.middleware.TenantMiddleware',
+    # ................................................
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -93,14 +117,30 @@ WSGI_APPLICATION = 'restaurant_project.wsgi.application'
 #     )
 # }
 
+#simple sql database
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
 
+#configuring db to work with multiple tenants
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django_tenants.postgresql_backend',
+        'NAME': os.getenv('DB_NAME', 'restaurant'),
+        'USER': os.getenv('DB_USER', 'postgres'),
+        'PASSWORD': os.getenv('DB_PASSWORD', 'admin123'),
+        'HOST': os.getenv('HOST', 'localhost'),
+        'PORT': os.getenv('PORT', 5432),
     }
 }
+
+DATABASE_ROUTERS = (
+    'django_tenants.routers.TenantSyncRouter',
+)
 
 # added simplejwt as an authentication class for drf
 
@@ -153,7 +193,7 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
-AUTH_USER_MODEL = "restaurant_app.CustomUser"
+AUTH_USER_MODEL = "users.CustomUser"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field

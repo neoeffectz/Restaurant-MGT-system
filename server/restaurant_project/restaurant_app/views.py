@@ -80,6 +80,9 @@ def restaurant(request):
 
     Common_categories = Categories.objects.all()
 
+    #This is assuming we'll be hosting 
+    hotel_details = Hotel.objects.all()
+
     #getting a complete order_id
     complete_order = Order.objects.filter(complete=True)
 

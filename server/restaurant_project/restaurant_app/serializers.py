@@ -1,7 +1,8 @@
 from rest_framework import serializers
 from .models import *
+from Menu.models import MenuProducts, Categories
 from django.contrib.auth import authenticate
-
+from users.models import CustomUser
 
 # serializer for user registration 
 class UserRegistrationSerializer(serializers.ModelSerializer):
@@ -22,12 +23,6 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         return user
     
 # added a serializer for staff registration
-    
-
-
-
-
-
 
 # model serializers starts here...
 
@@ -62,6 +57,17 @@ class OrderItemSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+<<<<<<< Updated upstream
+=======
+# class HotelSerializer(serializers.ModelSerializer):
+
+#     class Meta: 
+#         model = Hotel 
+#         fields = "__all__"
+
+
+# custom serializers 
+>>>>>>> Stashed changes
 class UpdateItemSerializer(serializers.Serializer):
    
    productId = serializers.CharField()

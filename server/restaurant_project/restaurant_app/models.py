@@ -1,8 +1,6 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser
-from django.contrib.auth.base_user import BaseUserManager
-from django.utils.translation import gettext_lazy as _ 
 from restaurant_project.settings import AUTH_USER_MODEL
+<<<<<<< Updated upstream
 
 
 
@@ -117,8 +115,39 @@ class MenuProducts(models.Model):
         return url
     
 
+=======
+from hotel.models import Hotel
+from Menu.models import MenuProducts
+User = AUTH_USER_MODEL
+
+
+
+class Reservation(models.Model):
+    guest = models.ForeignKey(User, on_delete=models.CASCADE)
+    hotel = models.ForeignKey(Hotel, on_delete=models.CASCADE)
+    check_in = models.DateField()
+    check_out = models.DateField()
+    number_of_adults = models.PositiveSmallIntegerField()
+    number_of_children = models.PositiveSmallIntegerField()
+    special_requests = models.TextField(blank=True, null=True)
+    is_confirmed = models.BooleanField(default=False)
+    table_number = models.CharField(max_length=10, null=True, blank=True)
+    table_type = models.CharField(max_length=50, null=True, blank=True)
+    is_available = models.BooleanField(default=True)
+    total_price = models.DecimalField(max_digits=10, decimal_places=2)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.guest
+    
+    class Meta:
+        verbose_name_plural = 'Reservation'
+
+
+>>>>>>> Stashed changes
 class Order(models.Model):
-    customer = models.ForeignKey(to=AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)
+    customer = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
     ordered_items = models.ManyToManyField(MenuProducts, through="OrderItem")
     transaction_id = models.CharField(max_length=200, null=True)
     pending = models.BooleanField(default=False)

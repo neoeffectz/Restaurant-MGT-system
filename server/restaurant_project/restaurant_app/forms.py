@@ -1,6 +1,6 @@
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 
-from .models import CustomUser
+from users.models import CustomUser
 
 # used a form to customize the damin panel 
 class CustomUserCreationForm(UserCreationForm):

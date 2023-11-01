@@ -2,7 +2,7 @@ from django.contrib import admin
 from .models import *
 from django.contrib.auth.admin import UserAdmin
 from .forms import CustomUserCreationForm, CustomUserChangeForm
-
+from users.models import CustomUser
 
 # Customized the admin panel to include other fields upon registration
 class CustomUserAdmin(UserAdmin):
@@ -28,13 +28,12 @@ class CustomUserAdmin(UserAdmin):
     )
     search_fields = ("email",)
     ordering = ("email",)
-
-
 admin.site.register(CustomUser, CustomUserAdmin)
-admin.site.register(Categories)
-admin.site.register(MenuProducts)
 admin.site.register(Order)
 admin.site.register(OrderItem)
 
 
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
